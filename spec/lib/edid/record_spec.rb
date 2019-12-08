@@ -30,12 +30,12 @@ RSpec.describe EDID::Record do
           Serial: 3173
           Manufacture_year: 2014
           Manufacture_week: 6
+          EDID 1.4
 
           Digital input? true
           Bit depth: 8
           Video Interface: DisplayPort
-          Analog input? true
-          White and sync levels relative to blank: +0.7/0 V
+          White and sync levels relative to blank: +0.7/−0.3 V
 
           Horizontal screen size: 34 cm
           Vertical screen size: 120 cm
@@ -45,7 +45,11 @@ RSpec.describe EDID::Record do
           DPMS suspend: no
           DPMS active-off: yes
           Display type: RGB 4:4:4
-          Analog type: Non-RGB color
+          Analog type: Monochrome or Grayscale
+
+          X Resolution: 1784
+
+          Checksum: 17
         STRING
       end
 
