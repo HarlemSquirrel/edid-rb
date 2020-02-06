@@ -10,6 +10,14 @@ RSpec.describe EDID::Record do
   context 'with an ASUS PB278q monitor' do
     let(:io) { File.open "#{FILES_DIR}/edid_asus_pb278q" }
 
+    describe '#display_name' do
+      it { expect(record.display_name).to eq 'ASUS PB278' }
+    end
+
+    describe '#display_serial_number' do
+      it { expect(record.display_serial_number).to eq 'E2LMTF003173' }
+    end
+
     describe '#manufacturer' do
       it { expect(record.manufacturer).to eq 'ACI' }
     end
@@ -37,19 +45,21 @@ RSpec.describe EDID::Record do
           Video Interface: DisplayPort
           White and sync levels relative to blank: +0.7/−0.3 V
 
-          Horizontal screen size: 34 cm
-          Vertical screen size: 120 cm
-          Display gamma: 58
+          Horizontal screen size: 60 cm
+          Vertical screen size: 34 cm
+          Display gamma: 120
 
-          DPMS standby: yes
+          DPMS standby: no
           DPMS suspend: no
           DPMS active-off: yes
-          Display type: RGB 4:4:4
-          Analog type: Monochrome or Grayscale
+          Display type: RGB 4:4:4 + YCrCb 4:4:4 + YCrCb 4:2:2
+          Analog type: unknown
 
-          X Resolution: 1784
+          Descriptors:
+            Display serial number: E2LMTF003173
+            Display name: ASUS PB278
 
-          Checksum: 17
+          Checksum: 242
         STRING
       end
 

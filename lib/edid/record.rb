@@ -17,6 +17,8 @@ module EDID
                                     3 => '+0.7/0 V' }
 
     HEADER_BYTES = [0x00, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00]
+
+    # Bytes 0-19 Header information
     array :header_bytes, type: :uint8, initial_length: 8, value: HEADER_BYTES, assert_value: HEADER_BYTES
     bit1 :manufacturer_id_pad, value: 0
     array :manufacturer_id, type: :bit5, initial_length: 3
@@ -37,10 +39,10 @@ module EDID
 
       # Analog if above is 0
       bit3 :white_sync_levels_code, onlyif: :analog_inputs?
-      bit1 :blank_to_blank_setup_expected_switch
-      bit1 :separate_sync_supported_switch
-      bit1 :composite_sync_supported_switch
-      bit1 :vsync_pulse_required_switch
+      bit1 :blank_to_blank_setup_expected_switch, onlyif: :analog_inputs?
+      bit1 :separate_sync_supported_switch, onlyif: :analog_inputs?
+      bit1 :composite_sync_supported_switch, onlyif: :analog_inputs?
+      bit1 :vsync_pulse_required_switch, onlyif: :analog_inputs?
     end
 
     uint8 :horizontal_screen_size_in_cm
@@ -85,36 +87,83 @@ module EDID
     # Bytes 38-53
     # Standard timing information
 
-    uint8 :x_resolution_value
-    bit2 :image_aspect_ration
-    bit6 :vertical_frequency
+    struct :standard_timing do
+      uint8 :i1_x_resolution
+      bit2  :i1_image_aspect_ration
+      bit6  :i1_vertical_frequency
 
+      uint8 :i2_x_resolution
+      bit2  :i2_image_aspect_ration
+      bit6  :i2_vertical_frequency
+
+      uint8 :i3_x_resolution
+      bit2  :i3_image_aspect_ration
+      bit6  :i3_vertical_frequency
+
+      uint8 :i4_x_resolution
+      bit2  :i4_image_aspect_ration
+      bit6  :i4_vertical_frequency
+
+      uint8 :i5_x_resolution
+      bit2  :i5_image_aspect_ration
+      bit6  :i5_vertical_frequency
+
+      uint8 :i6_x_resolution
+      bit2  :i6_image_aspect_ration
+      bit6  :i6_vertical_frequency
+
+      uint8 :i7_x_resolution
+      bit2  :i7_image_aspect_ration
+      bit6  :i7_vertical_frequency
+
+      uint8 :i8_x_resolution
+      bit2  :i8_image_aspect_ration
+      bit6  :i8_vertical_frequency
+    end
+
+    # Byetes 54–71
     # string :descriptor_1, read_length: 18
-    struct :detailed_timing_descriptor do
+    struct :descriptor_1 do
+      # 0-1
       uint16le :pixel_clock
+      # 2
       bit8 :horizontal_active_pixels_8
+      # 3
       bit8 :horizontal_blanking_pixels
+      # 4
       bit4 :horizontal_active_pixels_4
       bit4 :horizontal_blanking_pixels_4
-
+      # 5
       bit8 :vertical_active_pixels_8
+      # 6
       bit8 :vertical_blanking_pixels
+      # 7
       bit4 :vertical_active_pixels_4
       bit4 :vertical_blanking_pixels_4
-
+      # 8
       bit8 :horizontal_front_porch
+      # 9
       bit8 :horizontal_sync_pulse_width
+      # 10
       bit4 :vertical_front_porch
       bit4 :vertical_sync_pulse_width
-
+      # 11
+      bit2 :horizontal_front_porch_2
+      bit2 :horizontal_sync_pulse_width_2
+      bit2 :vertical_front_porch_2
+      bit2 :vertical_sync_pulse_width_2
+      # 12
       bit8 :horizontal_image_size
+      # 13
       bit8 :vertical_image_size
+      # 14
       bit4 :horizontal_image_size_4bit
       bit4 :vertical_image_size_4bit
-
+      # 15
       bit8 :horizontal_border_pixels_one_side
-      bit8 :vertical_border_pixels_one_side
-
+      # 16
+      bit8 :vertical_border_lines
+      # 17
       struct :features do
         bit1 :interlaced
         bit2 :stereo_mode_2
@@ -123,33 +172,53 @@ module EDID
         bit1 :reserved
         bit1 :stereo_mode_1
       end
+
     end
     struct :descriptor_2 do
       # string :descriptor_2, read_length: 18
-      bit2 :indicator
-      bit1 :reserved
-      bit1 :descriptor_type
-      bit1 :reserved_for_display_range_limits
-      string :text, read_length: 13, pad_front: true
+      uint16be :indicator
+      int8 :reserved
+      int8 :descriptor_type
+      int8 :reserved_for_display_range_limits
+      #string :text, read_length: 13, pad_front: true
+      string :text, length: 13
     end
-    # string :descriptor_3, read_length: 18
     struct :descriptor_3 do
       # string :descriptor_2, read_length: 18
-      bit2 :indicator
-      bit1 :reserved
-      bit1 :descriptor_type
-      bit1 :reserved_for_display_range_limits
-      string :text, read_length: 13
+      uint16be :indicator
+      int8 :reserved
+      int8 :descriptor_type
+      int8 :reserved_for_display_range_limits
+      #string :text, read_length: 13, pad_front: true
+      string :text, length: 13
     end
-    # string :descriptor_4, read_length: 18
     struct :descriptor_4 do
       # string :descriptor_2, read_length: 18
-      bit2 :indicator
-      bit1 :reserved
-      bit1 :descriptor_type
-      bit1 :reserved_for_display_range_limits
-      string :text, read_length: 13
+      uint16be :indicator
+      int8 :reserved
+      int8 :descriptor_type
+      int8 :reserved_for_display_range_limits
+      #string :text, read_length: 13, pad_front: true
+      string :text, length: 13
     end
+    # string :descriptor_3, read_length: 18
+    # struct :descriptor_3 do
+    #   # string :descriptor_2, read_length: 18
+    #   bit2 :indicator
+    #   bit1 :reserved
+    #   bit1 :descriptor_type
+    #   bit1 :reserved_for_display_range_limits
+    #   string :text, read_length: 13
+    # end
+    # # string :descriptor_4, read_length: 18
+    # struct :descriptor_4 do
+    #   # string :descriptor_2, read_length: 18
+    #   bit2 :indicator
+    #   bit1 :reserved
+    #   bit1 :descriptor_type
+    #   bit1 :reserved_for_display_range_limits
+    #   string :text, read_length: 13
+    # end
     uint8 :num_extensions_to_follow
     uint8 :checksum
 
@@ -163,6 +232,14 @@ module EDID
 
     def digital_display_type
       DIGITAL_DISPLAY_TYPES.fetch supported_features[:display_type_bits], 'unknown'
+    end
+
+    def display_name
+      descriptor_4[:text].strip
+    end
+
+    def display_serial_number
+      descriptor_2[:text].strip
     end
 
     def manufacturer
@@ -179,10 +256,6 @@ module EDID
 
     def white_sync_levels
       VIDEO_WHITE_AND_SYNC_LEVELS.fetch video_input_parameters[:white_sync_levels_code], 'unknown'
-    end
-
-    def x_resolution
-      (x_resolution_value + 31) * 8
     end
 
     def to_s
@@ -209,7 +282,9 @@ module EDID
         Display type: #{digital_display_type}
         Analog type: #{analog_display_type}
 
-        X Resolution: #{x_resolution}
+        Descriptors:
+          Display serial number: #{display_serial_number}
+          Display name: #{display_name}
 
         Checksum: #{checksum}
       MESSAGE
